@@ -15,5 +15,5 @@ module.exports = {
     },
   },
   darkMode: "media",
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 }
