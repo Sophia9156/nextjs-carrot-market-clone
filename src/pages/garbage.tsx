@@ -4,7 +4,7 @@ export default function Garbage() {
       <div className="bg-white dark:bg-black flex flex-col justify-between p-6 rounded-3xl shadow-xl">
         <span className="font-semibold dark:text-white text-3xl">Select Item</span>
         <ul>
-          {[1, 2, 3, 4, 5].map((i) => (
+          {[...new Array(5)].map((i) => (
             <li key={i} className="flex justify-between my-2">
               <span className="text-gray-500 dark:text-gray-100">Grey Chair</span>
               <span className="font-semibold dark:text-white">$19</span>
