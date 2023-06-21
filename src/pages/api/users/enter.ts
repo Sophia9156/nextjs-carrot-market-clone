@@ -1,6 +1,9 @@
+import twilio from "twilio";
 import client from "@/libs/server/client";
 import withHandler, { ResponseType } from "@/libs/server/withHandler";
 import { NextApiRequest, NextApiResponse } from "next";
+
+const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
 async function handler(
   req: NextApiRequest,
@@ -28,41 +31,14 @@ async function handler(
     },
   });
 
-  // if (email) {
-  //   user = await client.user.findUnique({
-  //     where: {
-  //       email,
-  //     },
-  //   });
-  //   if (!user) {
-  //     console.log("Did not find. Will create.");
-  //     user = await client.user.create({
-  //       data: {
-  //         name: "Anonymous",
-  //         email,
-  //       }
-  //     })
-  //   }
-  //   console.log(user);
-  // }
-
-  // if (phone) {
-  //   user = await client.user.findUnique({
-  //     where: {
-  //       phone: +phone,
-  //     },
-  //   });
-  //   if (!user) {
-  //     console.log("Did not find. Will create.");
-  //     user = await client.user.create({
-  //       data: {
-  //         name: "Anonymous",
-  //         phone: +phone,
-  //       }
-  //     })
-  //   }
-  //   console.log(user);
-  // }
+  if (phone) {
+    const message = await twilioClient.messages.create({
+      messagingServiceSid: process.env.TWILIO_MSID,
+      from: process.env.TWILIO_PHONE!,
+      to: process.env.MY_PHONE!,
+      body: `Your login token is ${payload}.`,
+    });
+  }
 
   return res.json({
     ok: true,
