@@ -5,8 +5,10 @@ import useUser from "@/libs/client/useUser";
 import Head from "next/head";
 
 export default function Home() {
-  const user = useUser();
+  const { user, isLoading } = useUser();
+
   console.log(user);
+
   return (
     <Layout
       title="홈"
