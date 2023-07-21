@@ -1,5 +1,7 @@
 import Layout from "@/components/layout";
 import TextArea from "@/components/textarea";
+import useMutation from "@/libs/client/useMutation";
+import { cls } from "@/libs/client/utils";
 import { Answer, Post, User } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -22,16 +24,37 @@ interface PostWithUser extends Post {
 interface CommunityPostResponse {
   ok: boolean;
   post: PostWithUser;
+  isWondering: boolean;
 }
 
 export default function CommunityPostDetail() {
   const router = useRouter();
-  const { data, error } = useSWR<CommunityPostResponse>(
+  const { data, mutate } = useSWR<CommunityPostResponse>(
     router.query.id ? `/api/posts/${router.query.id}` : null
   );
+  const [wonder] = useMutation(`/api/posts/${router.query.id}/wonder`);
+  const onWonderClick = () => {
+    if (!data) return;
+    mutate(
+      {
+        ...data,
+        post: {
+          ...data?.post,
+          _count: {
+            ...data?.post._count,
+            wonderings: data.isWondering
+              ? data?.post._count.wonderings - 1
+              : data?.post._count.wonderings + 1,
+          },
+        },
+        isWondering: !data.isWondering,
+      },
+      false
+    );
+    wonder({});
+  };
 
   useEffect(() => {
-    console.log(data);
     if (data?.post === null) router.push("/404");
   }, [data, router]);
 
@@ -45,9 +68,9 @@ export default function CommunityPostDetail() {
           <div className="w-10 h-10 rounded-full bg-slate-300" />
           <div>
             <p className="text-sm font-medium text-gray-700">
-              {data?.post.user.name}
+              {data?.post?.user?.name}
             </p>
-            <Link href={`/profile/${data?.post.user.id}`}>
+            <Link href={`/profile/${data?.post?.user?.id}`}>
               <p className="text-xs font-medium text-gray-500">
                 View profile &rarr;
               </p>
@@ -57,10 +80,15 @@ export default function CommunityPostDetail() {
         <div>
           <div className="mt-2 px-4 text-gray-700">
             <span className="text-orange-500 font-medium">Q.</span>{" "}
-            {data?.post.question}
+            {data?.post?.question}
           </div>
           <div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t border-b-[2px]  w-full">
-            <span className="flex space-x-2 items-center text-sm">
+            <button
+              onClick={onWonderClick}
+              className={cls(
+                "flex space-x-2 items-center text-sm",
+                data?.isWondering ? "text-teal-500" : ""
+              )}>
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -73,8 +101,8 @@ export default function CommunityPostDetail() {
                   strokeWidth="2"
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              <span>궁금해요 {data?.post._count.wonderings}</span>
-            </span>
+              <span>궁금해요 {data?.post?._count?.wonderings}</span>
+            </button>
             <span className="flex space-x-2 items-center text-sm">
               <svg
                 className="w-4 h-4"
@@ -88,12 +116,12 @@ export default function CommunityPostDetail() {
                   strokeWidth="2"
                   d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
               </svg>
-              <span>답변 {data?.post._count.answers}</span>
+              <span>답변 {data?.post?._count?.answers}</span>
             </span>
           </div>
         </div>
         <div className="px-4 my-5 space-y-5">
-          {data?.post.answers.map((answer) => (
+          {data?.post?.answers.map((answer) => (
             <div
               key={answer.id}
               className="flex items-start space-x-3">

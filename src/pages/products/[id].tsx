@@ -7,6 +7,7 @@ import { Product, User } from "@prisma/client";
 import useMutation from "@/libs/client/useMutation";
 import { cls } from "@/libs/client/utils";
 import useUser from "@/libs/client/useUser";
+import { useEffect } from "react";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -34,6 +35,10 @@ export default function ItemDetail() {
     // mutate("/api/users/me", (prev: any) => ({ ok: !prev.ok }), false);
   };
 
+  useEffect(() => {
+    if (data?.product === null) router.push("/404");
+  }, [data, router]);
+
   return (
     <Layout canGoBack>
       <div className="px-4 py-4">
@@ -43,9 +48,9 @@ export default function ItemDetail() {
             <div className="w-12 h-12 rounded-full bg-slate-300" />
             <div>
               <p className="text-sm font-medium text-gray-700">
-                {data?.product.user.name}
+                {data?.product?.user?.name}
               </p>
-              <Link href={`/users/profiles/${data?.product.user.id}`}>
+              <Link href={`/users/profiles/${data?.product?.user?.id}`}>
                 <p className="text-xs font-medium text-gray-500">
                   View profile &rarr;
                 </p>
@@ -54,12 +59,12 @@ export default function ItemDetail() {
           </div>
           <div className="mt-5">
             <h1 className="text-3xl font-bold text-gray-900">
-              {data?.product.name}
+              {data?.product?.name}
             </h1>
             <span className="text-2xl block mt-3 text-gray-900">
-              ${data?.product.price}
+              ${data?.product?.price}
             </span>
-            <p className="my-6 text-gray-700">{data?.product.description}</p>
+            <p className="my-6 text-gray-700">{data?.product?.description}</p>
             <div className="flex items-center justify-between space-x-2">
               <Button
                 large
