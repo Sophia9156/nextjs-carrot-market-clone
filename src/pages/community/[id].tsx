@@ -79,8 +79,11 @@ export default function CommunityPostDetail() {
   }, [data, router]);
 
   useEffect(() => {
-    if (answerData && answerData.ok) reset();
-  }, [answerData, reset]);
+    if (answerData && answerData.ok) {
+      reset();
+      mutate();
+    }
+  }, [answerData, reset, mutate]);
 
   return (
     <Layout canGoBack>
@@ -154,7 +157,9 @@ export default function CommunityPostDetail() {
                 <span className="text-sm block font-medium text-gray-700">
                   {answer.user.name}
                 </span>
-                <span className="text-xs text-gray-500 block ">{`${answer.createdAt}`}</span>
+                <span className="text-xs text-gray-500 block ">
+                  {String(answer.createdAt)}
+                </span>
                 <p className="text-gray-700 mt-2">{answer.answer}</p>
               </div>
             </div>
