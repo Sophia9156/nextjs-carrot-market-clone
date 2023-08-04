@@ -45,7 +45,10 @@ export default function Write() {
           required
           placeholder="Ask a question!"
         />
-        <Button text={loading ? "Loading..." : "Submit"} />
+        <Button
+          loading={loading}
+          text="Submit"
+        />
       </form>
     </Layout>
   );
