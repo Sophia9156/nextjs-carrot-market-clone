@@ -1,21 +1,30 @@
 import Link from "next/link";
 import FloatingButton from "@/components/floating-button";
 import Layout from "@/components/layout";
+import { Stream } from "@prisma/client";
+import useSWR from "swr";
 
-export default function Live() {
+interface StreamsResponse {
+  ok: boolean;
+  streams: Stream[];
+}
+
+export default function Streams() {
+  const { data } = useSWR<StreamsResponse>(`/api/streams`);
+
   return (
     <Layout
       title="라이브"
       hasTabBar>
       <div className="py-10 divide-y-[1px] space-y-4">
-        {[...new Array(10)].map((_, i) => (
+        {data?.streams.map((stream) => (
           <Link
-            key={i}
-            href={`/streams/${i}`}>
+            key={stream.id}
+            href={`/streams/${stream.id}`}>
             <span className="pt-4 block  px-4">
               <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video" />
               <h1 className="text-2xl mt-2 font-bold text-gray-900">
-                Galaxy S50
+                {stream.name}
               </h1>
             </span>
           </Link>
