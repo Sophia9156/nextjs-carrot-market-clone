@@ -5,10 +5,25 @@ import { Stream } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
+import useUser from "@/libs/client/useUser";
+import { useEffect } from "react";
+
+interface StreamMessage {
+  id: number;
+  message: string;
+  user: {
+    id: number;
+    avatar?: string;
+  };
+}
+
+interface StreamWithMessages extends Stream {
+  messages: StreamMessage[];
+}
 
 interface StreamResponse {
   ok: boolean;
-  stream: Stream;
+  stream: StreamWithMessages;
 }
 
 interface MessageForm {
@@ -17,8 +32,9 @@ interface MessageForm {
 
 export default function Stream() {
   const router = useRouter();
+  const { user } = useUser();
   const { register, handleSubmit, reset } = useForm<MessageForm>();
-  const { data } = useSWR<StreamResponse>(
+  const { data, mutate } = useSWR<StreamResponse>(
     router.query.id ? `/api/streams/${router.query.id}` : null
   );
   const [sendMessage, { loading, data: sendMessageData }] = useMutation(
@@ -29,6 +45,11 @@ export default function Stream() {
     reset();
     sendMessage(form);
   };
+  useEffect(() => {
+    if (sendMessageData && sendMessageData.ok) {
+      mutate();
+    }
+  }, [mutate, sendMessageData]);
 
   return (
     <Layout canGoBack>
@@ -46,12 +67,13 @@ export default function Stream() {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Live Chat</h2>
           <div className="py-10 pb-16 h-[50vh] overflow-y-scroll  px-4 space-y-4">
-            <Message message="Hi how much are you selling them for?" />
-            <Message
-              message="I want ￦20,000"
-              reversed
-            />
-            <Message message="미쳤어" />
+            {data?.stream?.messages?.map((message) => (
+              <Message
+                key={message.id}
+                message={message.message}
+                reversed={user?.id === message.user.id}
+              />
+            ))}
           </div>
           <div className="fixed py-2 bg-white  bottom-0 inset-x-0">
             <form
