@@ -34,6 +34,10 @@ export default function EditProfile() {
     if (user?.name) setValue("name", user.name);
     if (user?.email) setValue("email", user.email);
     if (user?.phone) setValue("phone", user.phone);
+    if (user?.avatar)
+      setAvatarPreview(
+        `https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${user?.avatar}/public`
+      );
   }, [setValue, user]);
 
   const [editProfile, { data, loading }] =
