@@ -39,7 +39,7 @@ export default function EditProfile() {
   const [editProfile, { data, loading }] =
     useMutation<EditProfileResponse>(`/api/users/me`);
 
-  const onValid = ({ name, email, phone, avatar }: EditProfileForm) => {
+  const onValid = async ({ name, email, phone, avatar }: EditProfileForm) => {
     if (name === "") {
       return setError("formErrors", {
         message: "Name is required.",
@@ -50,7 +50,20 @@ export default function EditProfile() {
         message: "Email OR Phone number are required. You need to choose one.",
       });
     }
-    editProfile({ email, phone });
+    if (avatar && avatar.length > 0) {
+      const cloudflareRequest = await (await fetch(`/api/files`)).json();
+      console.log(cloudflareRequest);
+      return;
+      // upload file to CF URL
+      editProfile({
+        name,
+        email,
+        phone,
+        // avatarURL: CF URL
+      });
+    } else {
+      editProfile({ name, email, phone });
+    }
   };
 
   useEffect(() => {
