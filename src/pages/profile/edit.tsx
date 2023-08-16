@@ -36,7 +36,7 @@ export default function EditProfile() {
     if (user?.phone) setValue("phone", user.phone);
     if (user?.avatar)
       setAvatarPreview(
-        `https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${user?.avatar}/public`
+        `https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${user?.avatar}/avatar`
       );
   }, [setValue, user]);
 
