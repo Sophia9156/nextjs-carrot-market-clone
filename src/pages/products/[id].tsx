@@ -8,6 +8,7 @@ import useMutation from "@/libs/client/useMutation";
 import { cls } from "@/libs/client/utils";
 import useUser from "@/libs/client/useUser";
 import { useEffect } from "react";
+import Image from "next/image";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -47,15 +48,19 @@ export default function ItemDetail() {
             <img
               src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${data?.product?.image}/public`}
               className="h-96 bg-slate-300"
+              alt="product"
             />
           ) : (
             <div className="h-96 bg-slate-300" />
           )}
           <div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
             {data?.product?.user?.avatar ? (
-              <img
+              <Image
                 src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${data?.product?.user?.avatar}/avatar`}
                 className="w-12 h-12 rounded-full bg-slate-300"
+                alt="profile"
+                width={48}
+                height={48}
               />
             ) : (
               <div className="w-12 h-12 rounded-full bg-slate-300" />
