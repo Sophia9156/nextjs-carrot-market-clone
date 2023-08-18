@@ -4,6 +4,7 @@ import useUser from "@/libs/client/useUser";
 import useSWR from "swr";
 import { Review, User } from "@prisma/client";
 import { cls } from "@/libs/client/utils";
+import Image from "next/image";
 
 interface ReviewWithUser extends Review {
   createdBy: User;
@@ -24,12 +25,15 @@ export default function Profile() {
       <div className="py-10 px-4">
         <div className="flex items-center space-x-3">
           {user?.avatar ? (
-            <img
+            <Image
               src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${user?.avatar}/avatar`}
               className="w-16 h-16 bg-slate-500 rounded-full"
+              alt="profile"
+              width={64}
+              height={64}
             />
           ) : (
-            <div className="w-16 h-16 bg-slate-500 rounded-full" />
+            <div className="w-16 h-16 bg-slate-300 rounded-full" />
           )}
 
           <div className="flex flex-col">
@@ -109,7 +113,17 @@ export default function Profile() {
             key={review.id}
             className="mt-12">
             <div className="flex space-x-4 items-center">
-              <div className="w-12 h-12 rounded-full bg-slate-500" />
+              {review.createdBy.avatar ? (
+                <Image
+                  src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${review.createdBy.avatar}/avatar`}
+                  className="w-12 h-12 rounded-full bg-slate-300"
+                  alt="profile"
+                  width={48}
+                  height={48}
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-slate-300" />
+              )}
               <div>
                 <h4 className="text-sm font-bold text-gray-800">
                   {review.createdBy.name}
