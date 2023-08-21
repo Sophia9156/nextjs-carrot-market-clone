@@ -45,11 +45,13 @@ export default function ItemDetail() {
       <div className="px-4 py-4">
         <div className="mb-8">
           {data?.product?.image ? (
-            <img
-              src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${data?.product?.image}/public`}
-              className="h-96 bg-slate-300"
-              alt="product"
-            />
+            <div className="h-96 bg-slate-300 relative object-contain">
+              <Image
+                src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${data?.product?.image}/public`}
+                alt="product"
+                fill
+              />
+            </div>
           ) : (
             <div className="h-96 bg-slate-300" />
           )}
