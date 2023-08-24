@@ -5,6 +5,9 @@ import Button from "@/components/button";
 import Input from "@/components/input";
 import useMutation from "@/libs/client/useMutation";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+
+const Bs = dynamic(() => import("@/components/bs"), { ssr: false });
 
 interface EnterForm {
   email?: string;
@@ -120,15 +123,18 @@ export default function Enter() {
                 />
               ) : null}
               {method === "phone" ? (
-                <Input
-                  register={register("phone", {
-                    required: true,
-                  })}
-                  name="phone"
-                  label="Phone number"
-                  type="number"
-                  kind="phone"
-                />
+                <>
+                  <Bs />
+                  <Input
+                    register={register("phone", {
+                      required: true,
+                    })}
+                    name="phone"
+                    label="Phone number"
+                    type="number"
+                    kind="phone"
+                  />
+                </>
               ) : null}
               {method === "email" ? (
                 <Button
