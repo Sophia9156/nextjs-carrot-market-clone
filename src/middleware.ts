@@ -14,7 +14,7 @@ export function middleware(req: NextRequest, ev: NextFetchEvent) {
     req.nextUrl.pathname = "/enter";
     return NextResponse.redirect(req.nextUrl);
   }
-  return NextResponse.json({ ok: true });
+  // return NextResponse.json({ ok: true });
 }
 
 export const config = {
