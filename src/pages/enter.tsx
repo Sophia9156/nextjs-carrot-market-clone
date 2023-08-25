@@ -6,8 +6,16 @@ import Input from "@/components/input";
 import useMutation from "@/libs/client/useMutation";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
-const Bs = dynamic(() => import("@/components/bs"), { ssr: false });
+const Bs = dynamic(
+  () =>
+    new Promise((resolve) =>
+      setTimeout(() => resolve(import("@/components/bs")), 10000)
+    ),
+  { ssr: false, loading: () => <Skeleton /> }
+);
 
 interface EnterForm {
   email?: string;
@@ -23,7 +31,7 @@ interface MutationResult {
 }
 
 export default function Enter() {
-  const [enter, { loading, data, error }] =
+  const [enter, { loading, data }] =
     useMutation<MutationResult>("/api/users/enter");
   const [confirmToken, { loading: tokenLoading, data: tokenData }] =
     useMutation<MutationResult>("/api/users/confirm");
