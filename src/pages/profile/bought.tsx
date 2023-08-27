@@ -1,7 +1,8 @@
 import Layout from "@/components/layout";
 import ProductList from "@/components/product-list";
+import { NextPage } from "next";
 
-export default function Bought() {
+const Bought: NextPage = () => {
   return (
     <Layout
       title="구매내역"
@@ -12,3 +13,5 @@ export default function Bought() {
     </Layout>
   );
 }
+
+export default Bought;

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import useMutation from "@/libs/client/useMutation";
 import Image from "next/image";
+import { NextPage } from "next";
 
 interface EditProfileForm {
   name?: string;
@@ -20,7 +21,7 @@ interface EditProfileResponse {
   error?: string;
 }
 
-export default function EditProfile() {
+const EditProfile: NextPage = () => {
   const { user } = useUser();
   const {
     register,
@@ -156,3 +157,5 @@ export default function EditProfile() {
     </Layout>
   );
 }
+
+export default EditProfile;

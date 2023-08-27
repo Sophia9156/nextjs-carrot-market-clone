@@ -1,3 +1,4 @@
+import { NextPage } from "next";
 import { FieldErrors, useForm } from "react-hook-form";
 
 interface FormValues {
@@ -6,7 +7,7 @@ interface FormValues {
   email: string;
 }
 
-export default function Form() {
+const Form: NextPage = () => {
   const {
     register,
     handleSubmit,
@@ -58,3 +59,5 @@ export default function Form() {
     </form>
   );
 }
+
+export default Form;

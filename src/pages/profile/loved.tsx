@@ -1,7 +1,8 @@
 import Layout from "@/components/layout";
 import ProductList from "@/components/product-list";
+import { NextPage } from "next";
 
-export default function Loved() {
+const Loved: NextPage = () => {
   return (
     <Layout
       title="관심목록"
@@ -12,3 +13,5 @@ export default function Loved() {
     </Layout>
   );
 }
+
+export default Loved;

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import useUser from "@/libs/client/useUser";
-import { useEffect } from "react";
+import { NextPage } from "next";
 
 interface StreamMessage {
   id: number;
@@ -30,7 +30,7 @@ interface MessageForm {
   message: string;
 }
 
-export default function Stream() {
+const StreamDetail: NextPage = () => {
   const router = useRouter();
   const { user } = useUser();
   const { register, handleSubmit, reset } = useForm<MessageForm>();
@@ -47,7 +47,7 @@ export default function Stream() {
     if (loading) return;
     reset();
     mutate(
-      (prev) =>
+      (prev: any) =>
         prev &&
         ({
           ...prev,
@@ -109,3 +109,5 @@ export default function Stream() {
     </Layout>
   );
 }
+
+export default StreamDetail;

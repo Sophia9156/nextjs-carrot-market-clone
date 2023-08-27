@@ -7,6 +7,7 @@ import useSWR from "swr";
 import { Product } from "@prisma/client";
 import Image from "next/image";
 import peaches from "../../public/images/peaches.jpeg";
+import { NextPage } from "next";
 
 export interface ProductWithCount extends Product {
   _count: {
@@ -19,7 +20,7 @@ interface ProductsResponse {
   products: ProductWithCount[];
 }
 
-export default function Home() {
+const Home: NextPage = () => {
   const { user, isLoading } = useUser();
   const { data } = useSWR<ProductsResponse>("/api/products");
 
@@ -67,3 +68,5 @@ export default function Home() {
     </Layout>
   );
 }
+
+export default Home;

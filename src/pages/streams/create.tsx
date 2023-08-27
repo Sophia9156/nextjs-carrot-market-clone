@@ -4,6 +4,7 @@ import Layout from "@/components/layout";
 import TextArea from "@/components/textarea";
 import useMutation from "@/libs/client/useMutation";
 import { Stream } from "@prisma/client";
+import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -19,7 +20,7 @@ interface CreateResponse {
   stream: Stream;
 }
 
-export default function Create() {
+const CreateStream: NextPage = () => {
   const router = useRouter();
   const [createStream, { loading, data }] =
     useMutation<CreateResponse>(`/api/streams`);
@@ -71,3 +72,5 @@ export default function Create() {
     </Layout>
   );
 }
+
+export default CreateStream;

@@ -3,6 +3,7 @@ import TextArea from "@/components/textarea";
 import useMutation from "@/libs/client/useMutation";
 import { cls } from "@/libs/client/utils";
 import { Answer, Post, User } from "@prisma/client";
+import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -38,7 +39,7 @@ interface AnswerResponse {
   response: Answer;
 }
 
-export default function CommunityPostDetail() {
+const CommunityPostDetail: NextPage = () => {
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<AnswerForm>();
   const { data, mutate } = useSWR<CommunityPostResponse>(
@@ -203,3 +204,5 @@ export default function CommunityPostDetail() {
     </Layout>
   );
 }
+
+export default CommunityPostDetail;

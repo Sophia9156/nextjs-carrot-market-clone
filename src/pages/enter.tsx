@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { NextPage } from "next";
 
 const Bs = dynamic(
   () =>
@@ -30,7 +31,7 @@ interface MutationResult {
   ok: boolean;
 }
 
-export default function Enter() {
+const Enter: NextPage = () => {
   const [enter, { loading, data }] =
     useMutation<MutationResult>("/api/users/enter");
   const [confirmToken, { loading: tokenLoading, data: tokenData }] =
@@ -198,3 +199,5 @@ export default function Enter() {
     </div>
   );
 }
+
+export default Enter;

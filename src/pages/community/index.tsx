@@ -4,6 +4,7 @@ import FloatingButton from "@/components/floating-button";
 import useSWR from "swr";
 import { Post, User } from "@prisma/client";
 import useCoords from "@/libs/client/useCoords";
+import { NextPage } from "next";
 
 interface PostWithUser extends Post {
   user: User;
@@ -18,7 +19,7 @@ interface PostsResponse {
   posts: PostWithUser[];
 }
 
-export default function Community() {
+const Community: NextPage = () => {
   const { latitude, longitude } = useCoords();
   const { data } = useSWR<PostsResponse>(
     latitude && longitude
@@ -100,3 +101,5 @@ export default function Community() {
     </Layout>
   );
 }
+
+export default Community;

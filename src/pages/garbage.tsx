@@ -1,4 +1,6 @@
-export default function Garbage() {
+import { NextPage } from "next"
+
+const Garbage: NextPage = () => {
   return (
     <div className="bg-slate-400 xl:place-content-center py-20 px-20 grid gap-10 lg:grid-cols-2 xl:grid-cols-3 min-h-screen">
       <div className="bg-white dark:bg-black flex flex-col justify-between p-6 rounded-3xl shadow-xl">
@@ -100,3 +102,5 @@ export default function Garbage() {
     </div>
   )
 }
+
+export default Garbage;
