@@ -4,6 +4,7 @@ import Layout from "@/components/layout";
 import { Stream } from "@prisma/client";
 import useSWR from "swr";
 import { useState } from "react";
+import { NextPage } from "next";
 
 interface StreamsResponse {
   ok: boolean;
@@ -11,7 +12,7 @@ interface StreamsResponse {
   total: number;
 }
 
-export default function Streams() {
+const Streams: NextPage = () => {
   const [page, setPage] = useState<number>(1);
   const { data } = useSWR<StreamsResponse>(`/api/streams?page=${page}`);
 
@@ -50,3 +51,5 @@ export default function Streams() {
     </Layout>
   );
 }
+
+export default Streams;

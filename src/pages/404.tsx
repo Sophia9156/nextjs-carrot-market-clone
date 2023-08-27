@@ -1,6 +1,6 @@
-import { useRouter } from "next/router";
+import { NextPage } from "next";
 
-export default function NotFound() {
+const NotFound: NextPage = () => {
   return (
     <div
       style={{
@@ -16,3 +16,5 @@ export default function NotFound() {
     </div>
   );
 }
+
+export default NotFound;

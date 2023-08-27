@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { Review, User } from "@prisma/client";
 import { cls } from "@/libs/client/utils";
 import Image from "next/image";
+import { NextPage } from "next";
 
 interface ReviewWithUser extends Review {
   createdBy: User;
@@ -15,7 +16,7 @@ interface ReviewsResponse {
   reviews: ReviewWithUser[];
 }
 
-export default function Profile() {
+const Profile: NextPage = () => {
   const { user } = useUser();
   const { data } = useSWR<ReviewsResponse>("/api/reviews");
   return (
@@ -157,3 +158,5 @@ export default function Profile() {
     </Layout>
   );
 }
+
+export default Profile;

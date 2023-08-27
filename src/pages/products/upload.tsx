@@ -4,6 +4,7 @@ import Layout from "@/components/layout";
 import TextArea from "@/components/textarea";
 import useMutation from "@/libs/client/useMutation";
 import { Product } from "@prisma/client";
+import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,7 +21,7 @@ interface UploadProductMutation {
   product: Product;
 }
 
-export default function Upload() {
+const Upload: NextPage = () => {
   const router = useRouter();
   const { register, handleSubmit, watch } = useForm<UploadProductForm>();
   const [uploadProduct, { loading, data }] =
@@ -131,3 +132,5 @@ export default function Upload() {
     </Layout>
   );
 }
+
+export default Upload;
