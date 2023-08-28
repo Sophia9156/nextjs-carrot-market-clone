@@ -11,6 +11,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { NextPage } from "next";
 
 const Bs = dynamic(
+  //@ts-ignore
   () =>
     new Promise((resolve) =>
       setTimeout(() => resolve(import("@/components/bs")), 10000)
