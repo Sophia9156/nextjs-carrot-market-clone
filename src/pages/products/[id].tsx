@@ -61,7 +61,7 @@ const ItemDetail: NextPage = () => {
   }, [data, router]);
 
   return (
-    <Layout canGoBack>
+    <Layout canGoBack title="상품 상세">
       <div className={isModal ? 'h-screen overflow-y-hidden -mt-12' : ''}>
         <div className="px-4 py-4">
           <div className="mb-8">

@@ -40,7 +40,7 @@ const CreateStream: NextPage = () => {
   return (
     <Layout
       canGoBack
-      title="Go Live">
+      title="라이브 등록">
       <form
         onSubmit={handleSubmit(onValid)}
         className=" space-y-4 py-10 px-4">

@@ -99,7 +99,7 @@ const EditProfile: NextPage = () => {
   return (
     <Layout
       canGoBack
-      title="Edit Profile">
+      title="프로필 수정">
       <form
         onSubmit={handleSubmit(onValid)}
         className="py-10 px-4 space-y-4">

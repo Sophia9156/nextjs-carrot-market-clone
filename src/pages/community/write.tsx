@@ -37,7 +37,7 @@ const Write: NextPage = () => {
   return (
     <Layout
       canGoBack
-      title="Write Post">
+      title="동네생활 쓰기">
       <form
         onSubmit={handleSubmit(onValid)}
         className="p-4 space-y-4">

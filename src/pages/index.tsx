@@ -28,9 +28,6 @@ const Home: NextPage = () => {
     <Layout
       title="홈"
       hasTabBar>
-      <Head>
-        <title>Home</title>
-      </Head>
       <div className="flex px-4 flex-col space-y-5 py-10">
         {data?.products?.map((product) => (
           <Item

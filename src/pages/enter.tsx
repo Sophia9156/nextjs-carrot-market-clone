@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { NextPage } from "next";
+import Head from "next/head";
 
 const Bs = dynamic(
   //@ts-ignore
@@ -68,6 +69,9 @@ const Enter: NextPage = () => {
 
   return (
     <div className="mt-16 px-4">
+      <Head>
+        <title>로그인 | Carrot Market</title>
+      </Head>
       <h3 className="text-3xl font-bold text-center">Enter to Carrot</h3>
       <div className="mt-12">
         {data?.ok ? (
