@@ -70,7 +70,7 @@ const Upload: NextPage = () => {
   return (
     <Layout
       canGoBack
-      title="Upload Product">
+      title="상품 등록">
       <form
         className="p-4 space-y-4"
         onSubmit={handleSubmit(onValid)}>

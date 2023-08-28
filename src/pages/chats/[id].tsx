@@ -67,7 +67,7 @@ export default function ChatsDetail() {
   }
 
   return (
-    <Layout canGoBack title={chatWith.name}>
+    <Layout canGoBack title="채팅">
       <div className="py-10 pb-16 px-4 space-y-4">
         {data?.chatroom?.chatMessages.map((message) => (
           <Message key={message.id} message={message.message} reversed={Number(message.user.id) === Number(user?.id)} avatarUrl={message.user.avatar} />

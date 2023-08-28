@@ -36,7 +36,7 @@ const Chats: NextPage = () => {
           }
           return (
             <Link key={chatroom.id} href={`/chats/${chatroom.id}`}>
-              <span className="flex px-4 cursor-pointer py-3 items-center space-x-3">
+              <div className="flex px-4 cursor-pointer py-3 items-center space-x-3">
                 {chatWith.avatarUrl ? (
                   <Image 
                     src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${chatWith.avatarUrl}/avatar`}
@@ -54,7 +54,7 @@ const Chats: NextPage = () => {
                     {Number(chatroom.chatMessages[0].userId) === Number(user?.id) ? '(You said) ' + chatroom.chatMessages[0].message : chatroom.chatMessages[0].message}
                   </p>
                 </div>
-              </span>
+              </div>
             </Link>
           )
         })}
