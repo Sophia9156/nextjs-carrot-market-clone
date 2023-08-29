@@ -22,13 +22,13 @@ export default function App({ Component, pageProps }: AppProps) {
       <Script src="https://developers.kakao.com/sdk/js/kakao.js" strategy="lazyOnload" /> {/** beforeInteractive, afterInteractive(default), lazyOnload */}
       <Script src="https://connect.facebook.net/en_US/sdk.js" onLoad={() => {
         window.fbAsyncInit = function() {
-          const FB: any = {};
-          FB.init({
-            appId: "your-app-id",
-            autoLogAppEvents: true,
-            xfbml: true,
-            version: "v13.0"
-          })
+          // const FB: any = {};
+          // FB.init({
+          //   appId: "your-app-id",
+          //   autoLogAppEvents: true,
+          //   xfbml: true,
+          //   version: "v13.0"
+          // })
         }
       }} />
     </SWRConfig>
