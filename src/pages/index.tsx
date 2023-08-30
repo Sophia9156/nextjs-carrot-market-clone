@@ -6,7 +6,7 @@ import useSWR, { SWRConfig } from "swr";
 import { Product } from "@prisma/client";
 import Image from "next/image";
 import peaches from "../../public/images/peaches.jpeg";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import client from "@/libs/server/client";
 
 export interface ProductWithCount extends Product {
@@ -25,9 +25,7 @@ const Home: NextPage = () => {
   const { data } = useSWR<ProductsResponse>("/api/products");
 
   return (
-    <Layout
-      title="홈"
-      hasTabBar>
+    <Layout title="홈" hasTabBar>
       <div className="flex px-4 flex-col space-y-5 py-10">
         {data?.products?.map((product) => (
           <Item
@@ -46,7 +44,8 @@ const Home: NextPage = () => {
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            aria-hidden="true">
+            aria-hidden="true"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -56,39 +55,36 @@ const Home: NextPage = () => {
           </svg>
         </FloatingButton>
       </div>
-      <Image
-        src={peaches}
-        alt="peaches"
-        placeholder="blur"
-        quality={75}
-      />
+      <Image src={peaches} alt="peaches" placeholder="blur" quality={75} />
     </Layout>
   );
-}
+};
 
 const Page: NextPage<{ products: ProductWithCount[] }> = ({ products }) => {
   return (
-    <SWRConfig value={{
-      fallback: {
-        "/api/products": {
-          ok: true,
-          products,
-        }
-      }
-    }}>
+    <SWRConfig
+      value={{
+        fallback: {
+          "/api/products": {
+            ok: true,
+            products,
+          },
+        },
+      }}
+    >
       <Home />
     </SWRConfig>
-  )
-}
+  );
+};
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async () => {
   const products = await client.product.findMany({});
 
   return {
     props: {
-      products: JSON.parse(JSON.stringify(products))
-    }
-  }
-}
+      products: JSON.parse(JSON.stringify(products)),
+    },
+  };
+};
 
 export default Page;
