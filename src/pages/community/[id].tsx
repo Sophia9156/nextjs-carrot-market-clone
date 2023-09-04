@@ -3,13 +3,14 @@ import TextArea from "@/components/textarea";
 import useMutation from "@/libs/client/useMutation";
 import { cls } from "@/libs/client/utils";
 import { Answer, Post, User } from "@prisma/client";
-import { NextPage } from "next";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import useSWR from "swr";
+import useSWR, { SWRConfig, unstable_serialize } from "swr";
+import client from "@/libs/server/client";
 
 interface AnswerWithUser extends Answer {
   user: User;
@@ -25,6 +26,7 @@ interface PostWithUser extends Post {
 }
 
 interface CommunityPostResponse {
+  id: string;
   ok: boolean;
   post: PostWithUser;
   isWondering: boolean;
@@ -42,9 +44,11 @@ interface AnswerResponse {
 const CommunityPostDetail: NextPage = () => {
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<AnswerForm>();
-  const { data, mutate } = useSWR<CommunityPostResponse>(
-    router.query.id ? `/api/posts/${router.query.id}` : null
-  );
+  const { data, mutate } = useSWR<CommunityPostResponse>([
+    "api",
+    "posts",
+    router.query.id,
+  ]);
   const [wonder, { loading }] = useMutation(
     `/api/posts/${router.query.id}/wonder`
   );
@@ -127,18 +131,21 @@ const CommunityPostDetail: NextPage = () => {
               className={cls(
                 "flex space-x-2 items-center text-sm",
                 data?.isWondering ? "text-teal-500" : ""
-              )}>
+              )}
+            >
               <svg
                 className="w-4 h-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
               </svg>
               <span>궁금해요 {data?.post?._count?.wonderings}</span>
             </button>
@@ -148,12 +155,14 @@ const CommunityPostDetail: NextPage = () => {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                ></path>
               </svg>
               <span>답변 {data?.post?._count?.answers}</span>
             </span>
@@ -161,9 +170,7 @@ const CommunityPostDetail: NextPage = () => {
         </div>
         <div className="px-4 my-5 space-y-5">
           {data?.post?.answers?.map((answer) => (
-            <div
-              key={answer.id}
-              className="flex items-start space-x-3">
+            <div key={answer.id} className="flex items-start space-x-3">
               {answer.user.avatar ? (
                 <Image
                   src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${answer.user.avatar}/avatar`}
@@ -187,9 +194,7 @@ const CommunityPostDetail: NextPage = () => {
             </div>
           ))}
         </div>
-        <form
-          onSubmit={handleSubmit(onValid)}
-          className="px-4">
+        <form onSubmit={handleSubmit(onValid)} className="px-4">
           <TextArea
             name="description"
             placeholder="Answer this question!"
@@ -203,6 +208,82 @@ const CommunityPostDetail: NextPage = () => {
       </div>
     </Layout>
   );
-}
+};
 
-export default CommunityPostDetail;
+const Page: NextPage<CommunityPostResponse> = ({ id, post, isWondering }) => {
+  return (
+    <SWRConfig
+      value={{
+        fallback: {
+          [unstable_serialize(["api", "posts", id])]: {
+            ok: true,
+            post,
+            isWondering,
+          },
+        },
+      }}
+    >
+      <CommunityPostDetail />
+    </SWRConfig>
+  );
+};
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
+};
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  const id = ctx?.params?.id;
+  if (!id) {
+    return {
+      props: {},
+    };
+  }
+
+  const post = await client.post.findUnique({
+    where: {
+      id: Number(id),
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          avatar: true,
+        },
+      },
+      answers: {
+        select: {
+          answer: true,
+          id: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              avatar: true,
+            },
+          },
+        },
+        take: 10,
+        skip: 0,
+      },
+      _count: {
+        select: {
+          answers: true,
+          wonderings: true,
+        },
+      },
+    },
+  });
+
+  return {
+    props: {
+      post: JSON.parse(JSON.stringify(post)),
+    },
+  };
+};
+
+export default Page;
