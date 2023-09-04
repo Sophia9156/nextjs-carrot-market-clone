@@ -39,10 +39,12 @@ async function handler(
     },
   });
 
-  res.json({
-    ok: true,
-    answer: newAnswer,
-  });
+  try {
+    await res.revalidate(`/`);
+    return res.json({ ok: true, answer: newAnswer, revalidated: true });
+  } catch (err) {
+    return res.status(500);
+  }
 }
 
 export default withApiSession(withHandler({ methods: ["POST"], handler }));
