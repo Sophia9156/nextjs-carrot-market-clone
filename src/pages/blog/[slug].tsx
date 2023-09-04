@@ -19,15 +19,9 @@ const PostDetail: NextPage<{ post: string; data: any }> = ({ post, data }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = () => {
-  const postsDirectory = path.join(process.cwd(), "src/posts");
-  const files = readdirSync(postsDirectory).map((file) => {
-    const [name, _] = file.split(".");
-    return { params: { slug: name } };
-  });
-
   return {
-    paths: files,
-    fallback: false,
+    paths: [],
+    fallback: "blocking",
   };
 };
 

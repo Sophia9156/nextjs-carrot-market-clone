@@ -9,7 +9,8 @@ import { cls } from "@/libs/client/utils";
 import useUser from "@/libs/client/useUser";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { NextPage } from "next";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import client from "@/libs/server/client";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -22,13 +23,17 @@ interface ChatroomResponse {
 }
 
 interface ItemDetailResponse {
-  ok: boolean;
+  // ok: boolean;
   product: ProductWithUser;
   isLiked: boolean;
   relatedProducts: Product[];
 }
 
-const ItemDetail: NextPage = () => {
+const ItemDetail: NextPage<ItemDetailResponse> = ({
+  product,
+  relatedProducts,
+  isLiked,
+}) => {
   const router = useRouter();
   const { user } = useUser();
   // const { mutate } = useSWRConfig();
@@ -39,16 +44,22 @@ const ItemDetail: NextPage = () => {
   const onFavClick = () => {
     toggleFav({});
     if (!data) return;
-    boundMutate((prev: any) => prev && { ...prev, isLiked: !prev.isLiked }, false);
+    boundMutate(
+      (prev: any) => prev && { ...prev, isLiked: !prev.isLiked },
+      false
+    );
     // mutate("/api/users/me", (prev: any) => ({ ok: !prev.ok }), false);
   };
 
   const [isModal, setModal] = useState(false);
-  const [createChatRoom, {data: chatroomData, loading}] = useMutation<ChatroomResponse>(`/api/chats?productId=${data?.product.id}&sellerId=${data?.product.userId}`);
+  const [createChatRoom, { data: chatroomData, loading }] =
+    useMutation<ChatroomResponse>(
+      `/api/chats?productId=${product.id}&sellerId=${product.userId}`
+    );
   const onClickYes = async () => {
     if (loading) return;
     createChatRoom({});
-  }
+  };
 
   useEffect(() => {
     if (chatroomData && chatroomData.ok) {
@@ -56,19 +67,23 @@ const ItemDetail: NextPage = () => {
     }
   }, [chatroomData, router]);
 
-  useEffect(() => {
-    if (data?.product === null) router.push("/404");
-  }, [data, router]);
+  if (router.isFallback) {
+    return (
+      <Layout canGoBack title="상품 상세">
+        <span>Loading...</span>
+      </Layout>
+    );
+  }
 
   return (
     <Layout canGoBack title="상품 상세">
-      <div className={isModal ? 'h-screen overflow-y-hidden -mt-12' : ''}>
+      <div className={isModal ? "h-screen overflow-y-hidden -mt-12" : ""}>
         <div className="px-4 py-4">
           <div className="mb-8">
-            {data?.product?.image ? (
+            {product?.image ? (
               <div className="h-96 bg-slate-300 relative object-contain">
                 <Image
-                  src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${data?.product?.image}/public`}
+                  src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${product?.image}/public`}
                   alt="product"
                   fill
                 />
@@ -77,9 +92,9 @@ const ItemDetail: NextPage = () => {
               <div className="h-96 bg-slate-300" />
             )}
             <div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
-              {data?.product?.user?.avatar ? (
+              {product?.user?.avatar ? (
                 <Image
-                  src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${data?.product?.user?.avatar}/avatar`}
+                  src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${product?.user?.avatar}/avatar`}
                   className="w-12 h-12 rounded-full bg-slate-300"
                   alt="profile"
                   width={48}
@@ -90,9 +105,9 @@ const ItemDetail: NextPage = () => {
               )}
               <div>
                 <p className="text-sm font-medium text-gray-700">
-                  {data?.product?.user?.name}
+                  {product?.user?.name}
                 </p>
-                <Link href={`/users/profiles/${data?.product?.user?.id}`}>
+                <Link href={`/users/profiles/${product?.user?.id}`}>
                   <p className="text-xs font-medium text-gray-500">
                     View profile &rarr;
                   </p>
@@ -101,14 +116,14 @@ const ItemDetail: NextPage = () => {
             </div>
             <div className="mt-5">
               <h1 className="text-3xl font-bold text-gray-900">
-                {data?.product?.name}
+                {product?.name}
               </h1>
               <span className="text-2xl block mt-3 text-gray-900">
-                ${data?.product?.price}
+                ${product?.price}
               </span>
-              <p className="my-6 text-gray-700">{data?.product?.description}</p>
+              <p className="my-6 text-gray-700">{product?.description}</p>
               <div className="flex items-center justify-between space-x-2">
-                {user?.id !== data?.product.userId ? (
+                {user?.id !== product.userId ? (
                   <>
                     <Button
                       onClick={() => {
@@ -120,13 +135,13 @@ const ItemDetail: NextPage = () => {
                     <button
                       onClick={onFavClick}
                       className={cls(
-                        'p-3 rounded-md flex items-center justify-center',
-                        data?.isLiked
-                          ? 'text-red-500 hover:bg-gray-100 hover:text-red-600'
-                          : ' text-gray-400 hover:bg-gray-100 hover:text-gray-500'
+                        "p-3 rounded-md flex items-center justify-center",
+                        isLiked
+                          ? "text-red-500 hover:bg-gray-100 hover:text-red-600"
+                          : " text-gray-400 hover:bg-gray-100 hover:text-gray-500"
                       )}
                     >
-                      {data?.isLiked ? (
+                      {isLiked ? (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
@@ -160,12 +175,12 @@ const ItemDetail: NextPage = () => {
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Similar items</h2>
             <div className="mt-6 grid grid-cols-2 gap-4">
-              {data?.relatedProducts.map((product) => (
+              {relatedProducts.map((product) => (
                 <div key={product.id}>
                   <Link href={`/products/${product.id}`}>
                     {product.image ? (
                       <div className="h-56 w-full mb-4 bg-slate-300">
-                        <Image 
+                        <Image
                           src={`https://imagedelivery.net/-iJxaZY5qULn22hrA5P1Cg/${product.id}/public`}
                           alt="product"
                           fill
@@ -186,16 +201,16 @@ const ItemDetail: NextPage = () => {
         </div>
         <div
           className={cls(
-            'w-full h-full bg-gray-600/[0.7] absolute bottom-0 left-0 flex justify-center items-center',
-            isModal ? '' : 'hidden'
+            "w-full h-full bg-gray-600/[0.7] absolute bottom-0 left-0 flex justify-center items-center",
+            isModal ? "" : "hidden"
           )}
         >
           <div className="bg-white p-5 rounded-md">
             <p className="py-2">Do you want to talk to seller?</p>
             <div className="flex cursor-pointer py-3 border-t items-center space-x-3">
-              {data?.product?.user?.avatar ? (
+              {product?.user?.avatar ? (
                 <Image
-                  src={`https://imagedelivery.net/IGzV4oNIIV0ja6ZhmMk45g/${data?.product.user.avatar}/avatar`}
+                  src={`https://imagedelivery.net/IGzV4oNIIV0ja6ZhmMk45g/${product.user.avatar}/avatar`}
                   className="w-12 h-12 rounded-full bg-slate-300"
                   width={48}
                   height={48}
@@ -206,7 +221,7 @@ const ItemDetail: NextPage = () => {
               )}
               <div>
                 <p className="text-sm font-medium text-gray-700">
-                  {data?.product?.user?.name}
+                  {product?.user?.name}
                 </p>
               </div>
             </div>
@@ -214,14 +229,14 @@ const ItemDetail: NextPage = () => {
               <Button
                 onClick={onClickYes}
                 text="Yes"
-                className={loading ? 'disabled' : ''}
+                className={loading ? "disabled" : ""}
               />
               <Button
                 onClick={() => {
                   setModal(false);
                 }}
                 text="No"
-                className={loading ? 'disabled' : ''}
+                className={loading ? "disabled" : ""}
               />
             </div>
           </div>
@@ -229,6 +244,60 @@ const ItemDetail: NextPage = () => {
       </div>
     </Layout>
   );
-}
+};
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
+};
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  if (!ctx?.params?.id) {
+    return {
+      props: {},
+    };
+  }
+
+  const product = await client.product.findUnique({
+    where: {
+      id: Number(ctx.params.id),
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+  const terms = product?.name.split(" ").map((word) => ({
+    name: {
+      contains: word,
+    },
+  }));
+  const isLiked = false;
+  const relatedProducts = await client.product.findMany({
+    where: {
+      OR: terms,
+      AND: {
+        id: {
+          not: product?.id,
+        },
+      },
+    },
+  });
+
+  return {
+    props: {
+      product: JSON.parse(JSON.stringify(product)),
+      relatedProducts: JSON.parse(JSON.stringify(relatedProducts)),
+      isLiked,
+    },
+  };
+};
 
 export default ItemDetail;
