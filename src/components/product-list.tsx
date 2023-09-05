@@ -16,7 +16,7 @@ interface ProductListResponse {
   [key: string]: Record[];
 }
 
-export default function ProductList({ kind }: ProductListProps) {
+const ProductList = ({ kind }: ProductListProps) => {
   const { data } = useSWR<ProductListResponse>(`/api/users/me/${kind}`);
 
   return data ? (
@@ -32,4 +32,6 @@ export default function ProductList({ kind }: ProductListProps) {
       ))}
     </React.Fragment>
   ) : null;
-}
+};
+
+export default ProductList;
